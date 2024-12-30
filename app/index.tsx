@@ -1,74 +1,200 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { View, Text, ScrollView, Pressable } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useCallback, useMemo, useRef, useState } from "react";
+import img from "@/assets/images/Waving Hand Medium Light Skin Tone.svg";
+import React from "react";
+import { Entypo } from "@expo/vector-icons";
+import BottomSheet, {
+  BottomSheetBackdrop,
+  BottomSheetBackdropProps,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
+import { Image } from "expo-image";
 
 export default function HomeScreen() {
+  const [open, setOpen] = useState(false);
+  const snapPoints = useMemo(() => ["40%"], []);
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+  // callbacks
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
+  const renderBackdrop = (props: BottomSheetBackdropProps) => (
+    <BottomSheetBackdrop
+      {...props}
+      style={[props.style, { flex: 1 }]}
+      appearsOnIndex={0}
+      disappearsOnIndex={-1}
+    />
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <>
+      <SafeAreaView style={{ flex: 1 }}>
+        <View>
+          <Text style={{ padding: 4 }}>Subscription</Text>
+        </View>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ padding: 16 }}>
+          <View
+            style={{
+              borderWidth: 2,
+              borderColor: "#D9D9D9",
+              flex: 1,
+              marginTop: 36,
+              paddingTop: 16,
+              paddingBottom: 24,
+              paddingHorizontal: 16,
+              borderRadius: 12,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: 500,
+                color: "green",
+                marginBottom: 16,
+                backgroundColor: "rgba(9,255,74,0.22)",
+                padding: 2,
+                paddingHorizontal: 12,
+                alignSelf: "flex-start",
+                textAlign: "center",
+                borderRadius: 8,
+              }}
+            >
+              Current Plan
+            </Text>
+            <Text
+              style={{
+                fontSize: 32,
+                fontWeight: 700,
+                maxWidth: 200,
+                marginBottom: 8,
+                lineHeight: 40,
+              }}
+            >
+              $ 40/month
+            </Text>
+
+            <Text
+              style={{
+                flex: 1,
+                lineHeight: 20,
+                fontSize: 14,
+                fontWeight: 400,
+                color: "#797979",
+                marginBottom: 16,
+              }}
+            >
+              Ethiopian Injera delivered to your doorsteps every week, paid
+              monthly.
+            </Text>
+            <View style={{ flex: 1, gap: 4 }}>
+              <Text style={{ fontSize: 12, fontWeight: 500 }}>
+                🌾 Always fresh{" "}
+              </Text>
+              <Text style={{ fontSize: 12, fontWeight: 500 }}>
+                🚚 Delivered regularly{" "}
+              </Text>
+              <Text style={{ fontSize: 12, fontWeight: 500, marginBottom: 16 }}>
+                🍴 Hassle-free
+              </Text>
+              <Pressable
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  alignSelf: "flex-start",
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 500,
+                    color: "#FF6B00",
+                  }}
+                >
+                  Current Plan
+                </Text>
+                <Entypo name="chevron-right" size={24} color="#FF6B00" />
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
+        <Pressable
+          onPress={() => setOpen(true)}
+          style={{ backgroundColor: "orange" }}
+        >
+          <Text>Btn</Text>
+        </Pressable>
+      </SafeAreaView>
+
+      {open && (
+        <BottomSheet
+          enableDynamicSizing={false}
+          enablePanDownToClose
+          ref={bottomSheetRef}
+          onChange={handleSheetChanges}
+          snapPoints={snapPoints}
+          index={0}
+          onClose={() => setOpen(false)}
+          backdropComponent={renderBackdrop}
+        >
+          <BottomSheetView style={{ padding: 16 }}>
+            <View
+              style={{
+                alignItems: "center",
+              }}
+            >
+              <View
+                style={{
+                  justifyContent: "center",
+                  height: 60,
+                  width: 60,
+                  padding: 4,
+                  borderRadius: 50,
+                  backgroundColor: "#eeeeee",
+                  marginTop: 16,
+                }}
+              >
+                <Image
+                  source={img}
+                  style={{
+                    height: 40,
+                    objectFit: "contain",
+                  }}
+                  contentFit="contain"
+                />
+              </View>
+
+              <Text
+                style={{
+                  lineHeight: 20,
+                  fontSize: 24,
+                  fontWeight: 600,
+                  color: "#000000",
+                  marginTop: 24,
+                  marginBottom: 12,
+                  paddingVertical: 4,
+                }}
+              >
+                Subscription Cancelled
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  fontWeight: 400,
+                  marginBottom: 16,
+                  color: "#797979",
+                  textAlign: "center",
+                }}
+              >
+                You have successfully cancelled your Injera subscription
+              </Text>
+            </View>
+          </BottomSheetView>
+        </BottomSheet>
+      )}
+    </>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});
